@@ -15,7 +15,6 @@
   (let [proc (apply conch/proc "unbuffer" app args)
         out (future (conch/stream-to-string proc :out))
         err (future (conch/stream-to-string proc :err ))]
-    (conch/done proc)
     (let [exit-code (conch/exit-code proc *timeout*)]
       {:exit-code exit-code
        :out @out
