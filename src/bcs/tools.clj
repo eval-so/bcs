@@ -18,8 +18,7 @@
      [ret# (/ (double (- (System/nanoTime) start#)) 1000000.0)]))
 
 (defn sandboxed
-  "Run the application in the sandbox with args and send it the
-   code on stdin."
+  "Run the application in the sandbox with args."
   [app & args]
   (let [proc (apply conch/proc "unbuffer" app args)
         out (future (conch/stream-to-string proc :out))
