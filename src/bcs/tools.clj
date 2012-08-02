@@ -9,9 +9,11 @@
    and :code"
   :lang)
 
-(defn sandboxed
-  "Run the application in the sandbox with args."
-  [app & args]
+(defn- shell-out
+  "Run the application with args. Wraps the application in unbuffer to prevent
+   output buffering. Returns a map of exit-code, output, err, and the time it
+   took for the program to finish."
+  [app sandbox? & args]
   (let [proc (apply conch/proc "unbuffer" app (remove nil? args))
         out (future (conch/stream-to-string proc :out))
         err (future (conch/stream-to-string proc :err))]
@@ -20,3 +22,15 @@
        :out @out
        :err @err
        :elapsed-time ms})))
+
+(defn unsandboxed
+  "Run application with args. Does not use the selinux sandbox but
+   does use *timeout* to timeout if necessary."
+  [app & args]
+  (apply shell-out app false args))
+
+;; Protip: there is no sandbox yet.
+(defn sandboxed.
+  "Run the application with args inside of the sandbox."
+  [app & args]
+  (apply shell-out app true args))
