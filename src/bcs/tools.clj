@@ -12,9 +12,9 @@
 (defn sandboxed
   "Run the application in the sandbox with args."
   [app & args]
-  (let [proc (apply conch/proc "unbuffer" app args)
+  (let [proc (apply conch/proc "unbuffer" app (remove nil? args))
         out (future (conch/stream-to-string proc :out))
-        err (future (conch/stream-to-string proc :err ))]
+        err (future (conch/stream-to-string proc :err))]
     (let [[exit-code ms] (with-timing (conch/exit-code proc *timeout*))]
       {:exit-code exit-code
        :out @out
